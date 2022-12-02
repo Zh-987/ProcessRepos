@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Threading;
+
 namespace ProcessItStep
 {
     class Program
@@ -72,6 +76,40 @@ namespace ProcessItStep
 
             processstartInfo.Arguments = "https://stackoverflow.com";
             Process.Start(processstartInfo);
+
+            /*            
+             *            Домен Приложения */
+                        AppDomain domain = AppDomain.CurrentDomain;
+                        Console.WriteLine($"Name: {domain.FriendlyName}");
+                        Console.WriteLine($"Base Directory: {domain.BaseDirectory}");
+                        Console.WriteLine();
+
+                        Assembly[] assemblies = domain.GetAssemblies();
+                        foreach (Assembly asm in assemblies)
+                            Console.WriteLine(asm.GetName().Name);
+
+            /* Через консоль искать в гугле*/
+            Console.WriteLine("GOOGLE SEARCH:\n");
+
+            string str = Console.ReadLine();
+
+            Process toKill = Process.Start(new ProcessStartInfo("https://www.google.com/search?q=" + str) { UseShellExecute = true });
+            
+            Thread.Sleep(10000);
+
+            Process[] chrome = Process.GetProcessesByName("chrome");
+             SearchInGoogle(str);
+            foreach(Process process in chrome)
+            {
+                process.Kill();
+            }
+
+        }
+
+       public static void SearchInGoogle(string str)
+        {
+             Process.Start(new ProcessStartInfo("https://www.google.com/search?q="+str) { UseShellExecute = true });
+           
 
         }
     }
